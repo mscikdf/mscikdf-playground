@@ -1,0 +1,53 @@
+Copyright (c) 2025 MSCIKDF Labs.
+All rights reserved.
+
+LICENSE TERMS FOR MSCIKDF BEHAVIOR VERIFICATION PLAYGROUND
+=================================================================
+
+1. Grant of Permission
+----------------------
+This software is provided solely for **evaluation**, **research**,
+**academic study**, and **offline cryptographic behavior verification**.
+
+You are permitted to:
+- Run the software in offline or air-gapped environments.
+- Inspect the observable output of the CLI tools.
+- Use the software for learning, cryptographic analysis, or noncommercial study.
+- Share unmodified copies of this LICENSE file along with the software binaries.
+
+2. Prohibited Activities
+------------------------
+The following activities are strictly prohibited without the
+**prior written permission** of the copyright owner:
+
+- **Commercial use** of any kind, including internal use by commercial entities.
+- Integration into any commercial or revenue-producing product or service.
+- Redistribution, repackaging, or hosting of this software.
+- Modification, reverse engineering, decompiling, disassembly,
+  or derivative works.
+- Use of this software or its output for training AI models.
+- Use in security products, wallets, key managers, exchanges,
+  authentication systems, or enterprise infrastructure.
+
+3. Intellectual Property
+------------------------
+This software, its design, specifications, and behavior constitute
+intellectual property owned exclusively by MSCIKDF Labs.
+
+All rights not expressly granted in this license are reserved.
+
+4. Patent Notice
+----------------
+Portions of this software relate to inventions that are
+**patent pending** under international and Canadian systems.
+
+Use of this software does not grant any rights to practice,
+implement, or commercialize any patented or patent-pending technology.
+
+5. No Warranty
+--------------
+This software is provided "AS IS", without warranty of any kind,
+express or implied. Use at your own risk.
+
+
+By using this software, you agree to be bound by the terms of this license.
