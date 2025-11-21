@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Detect OS
+OS=$(uname)
+
+# Forward all arguments: "$@"
+
+if [[ "$OS" == "Darwin" ]]; then
+    # macOS
+    exec ./cli/mscikdf_macos "$@"
+elif [[ "$OS" == "Linux" ]]; then
+    # Linux
+    exec ./cli/mscikdf_linux "$@"
+else
+    echo "Unsupported OS: $OS"
+    exit 1
+fi

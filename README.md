@@ -12,7 +12,15 @@ We also recommend performing each operation on **two independent air-gapped mach
 - Generate a wallet on Machine A, then restore it on Machine B.  
 - Rotate a passphrase on Machine A, then restore the resulting mnemonic with the new passphrase on Machine B.
 - Repeat these steps on both machines as many times as desired.
+- Export same private keys with different mnemonics-passphrase pairs
 
+**⚠️ Important Safety Notice**
+
+This toolkit is intended **for testing and research purposes only**.  
+While we have made every effort to ensure correctness and security, **we cannot guarantee the absence of bugs, flaws, or unexpected behavior**.  
+**Do NOT use real funds**, production keys, or any sensitive material with this test suite.
+
+Use at your own risk.
 
 This further confirms that all behaviors are fully deterministic and do not rely on any hidden state, caches, or device-specific artifacts.
 ---
