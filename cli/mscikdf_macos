@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Launcher for macOS MSCIKDF CLI
+
+set -e
+
+# Resolve THIS script's directory
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+
+# macOS dynamic library path
+export DYLD_LIBRARY_PATH="$ROOT_DIR/lib/macos-x86_64:$DYLD_LIBRARY_PATH"
+
+# compiled CLI binary
+BIN="$SCRIPT_DIR/mscikdf_cli_macos"
+
+if [[ ! -f "$BIN" ]]; then
+    echo "[ERROR] mscikdf_cli binary NOT found!"
+    echo "Expected at: $BIN"
+    echo "Build with:"
+    echo "  cargo build --release --bin mscikdf_cli"
+    exit 1
+fi
+
+# Run CLI
+"$BIN" "$@"

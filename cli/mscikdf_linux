@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Launcher for Linux MSCIKDF CLI
+
+set -e
+
+# Resolve directory of THIS script
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+
+# lib path
+export LD_LIBRARY_PATH="$ROOT_DIR/lib/linux-x86_64:$LD_LIBRARY_PATH"
+
+# compiled CLI binary
+BIN="$SCRIPT_DIR/mscikdf_cli_linux"
+
+if [[ ! -f "$BIN" ]]; then
+    echo "[ERROR] mscikdf_cli binary NOT found!"
+    echo "Expected at: $BIN"
+    echo "Build with:"
+    echo "  cargo build --release --bin mscikdf_cli"
+    exit 1
+fi
+
+# Run CLI
+"$BIN" "$@"
