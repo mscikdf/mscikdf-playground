@@ -245,21 +245,4 @@ For questions or collaboration inquiries, please contact the author.
 
 ## 5. License
 
-The MSCIKDF Behavior Verification Playground is released under a strict
-**noncommercial evaluation license**.
-
-This software may be used for:
-
-- evaluation
-- research
-- academic study
-- offline cryptographic behavior verification
-
-Commercial use, redistribution, modification, integration into any product,
-or internal use by commercial entities is strictly prohibited without prior
-written permission from MSCIKDF Labs.
-
-This project is part of an early technical validation lifecycle, and the
-licensing terms may change in future releases.
-
-For commercial inquiries or collaboration, please contact the author.
+The MSCIKDF Behavior Verification Playground is released under MIT License.
