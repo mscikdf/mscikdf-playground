@@ -14,21 +14,6 @@ We also recommend performing each operation on **two independent air-gapped mach
 - Repeat these steps on both machines as many times as desired.
 - Export same private keys with different mnemonics-passphrase pairs
 
-**⚠️ Note on Input Validation**
-
-This CLI playground assumes well-formed UTF-8 input from trusted users
-and intentionally performs no input normalization or malicious-input filtering,
-because its purpose is to demonstrate the behavioral guarantees of MSCIKDF.
-
-The production MSCIKDF-Core library will enforce:
-
-- Unicode NFC normalization
-- Forbidden codepoint detection (zero-width, control, bidi, surrogate)
-- Whitespace canonicalization
-- UTF-8 validation
-
-to ensure deterministic, misuse-resistant cryptographic behavior across platforms.
-
 **⚠️ Important Safety Notice**
 
 This toolkit is intended **for testing and research purposes only**.  
