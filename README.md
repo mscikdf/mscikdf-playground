@@ -14,15 +14,61 @@ We also recommend performing each operation on **two independent air-gapped mach
 - Repeat these steps on both machines as many times as desired.
 - Export same private keys with different mnemonics-passphrase pairs
 
+**⚠️ Note on Input Validation**
+
+This CLI playground assumes well-formed UTF-8 input from trusted users
+and intentionally performs no input normalization or malicious-input filtering,
+because its purpose is to demonstrate the behavioral guarantees of MSCIKDF.
+
+The production MSCIKDF-Core library will enforce:
+
+- Unicode NFC normalization
+- Forbidden codepoint detection (zero-width, control, bidi, surrogate)
+- Whitespace canonicalization
+- UTF-8 validation
+
+to ensure deterministic, misuse-resistant cryptographic behavior across platforms.
+
 **⚠️ Important Safety Notice**
 
 This toolkit is intended **for testing and research purposes only**.  
+
+The CLI includes a private-key export subcommand, but only for behavior-verification purposes.
+
 While we have made every effort to ensure correctness and security, **we cannot guarantee the absence of bugs, flaws, or unexpected behavior**.  
+
 **Do NOT use real funds**, production keys, or any sensitive material with this test suite.
 
 Use at your own risk.
 
 This further confirms that all behaviors are fully deterministic and do not rely on any hidden state, caches, or device-specific artifacts.
+
+---
+
+## 🔄 Recent Updates (2025-12-04)
+
+The MSCIKDF project has recently added several major improvements:
+
+### 1. Enterprise-grade Revocation Layer (New)
+A new revocation primitive has been added to MSCIKDF Core.  
+This enables verifiable, deterministic identity invalidation and  
+enterprise-level recovery schemes.  
+(⚠️ Not included in the CLI.)
+
+### 2. Seamless Migration of Existing Private Keys (New)
+MSCIKDF can now wrap and assimilate existing legacy private keys  
+(ECDSA / Ed25519 / secp256k1 / etc.) into the unified Crypto Entity model.  
+This allows smooth migration from traditional seed-based wallets.  
+(⚠️ Not included in the CLI.)
+
+### 3. Added the ePrint Paper
+The original MSCIKDF / ADI design paper is now included in this repository  
+for research and citation purposes.
+
+### 4. Added Test Case Code
+A full set of deterministic, stateless behavior test cases has been added  
+to extend this playground’s coverage.
+
 ---
 
 # 1. Purpose of This Test Suite
@@ -30,8 +76,8 @@ This further confirms that all behaviors are fully deterministic and do not rely
 This test suite allows anyone to verify the following behaviors:
 
 - Passphrase rotation without changing any derived addresses  
-- restorey of the same multi-chain identity from the same mnemonic + passphrase pair  
-- restorey using any previous passphrase version  
+- Restore of the same multi-chain identity from the same mnemonic + passphrase pair  
+- Restore using any previous passphrase version  
 - Stateless, offline operation (no database, no cache, no persistent files)  
 - Deterministic generation of multiple cryptographic identities from one mnemonic  
 - No exposure of seeds, private keys, or derivation paths
@@ -65,11 +111,11 @@ You may track system calls to confirm that no files are read/written and no netw
 
 ### macOS
 ```bash
-sudo dtruss -f ./cli/mscikdf_cli_macos generate "test123"
+sudo dtruss -f ./mscikdf generate "test123"
 
 ### Linux
 ```bash
-strace -f -e trace=file,network ./cli/mscikdf_cli_macos generate "test123"
+strace -f -e trace=file,network ./mscikdf generate "test123"
 ```
 
 Expected observations:
@@ -118,7 +164,7 @@ Each scenario is designed as a reproducible experiment.
 All tests use the command-line tool provided by this test suite.
 
 ```bash
-./cli/mscikdf_cli_macos generate "pass123"
+./mscikdf generate "pass123"
 ```
 
 This outputs:
@@ -134,7 +180,7 @@ This outputs:
 ### Step 3 — restore
 
 ```bash
-./cli/mscikdf_cli_macos restore "<mnemonic>" "pass123"
+./mscikdf restore  "pass123" "<mnemonic>"
 ```
 
 **Expected** :
@@ -147,13 +193,13 @@ No private keys or seeds are shown at any time.
 ### Step 1
 
 ```bash
-./cli/mscikdf_cli_macos restore "pass" "<mnemonic>" 
+./mscikdf restore "pass" "<mnemonic>" 
 ```
 
 ### Step 2 — Rotate passphrase
 
 ```bash
-./cli/mscikdf_cli_macos rekey "oldpass" "newpass" "<mnemonic>" 
+./mscikdf rekey "oldpass" "newpass" "<mnemonic>" 
 ```
 
 This produces a new mnemonic corresponding to the new passphrase.
@@ -161,14 +207,14 @@ This produces a new mnemonic corresponding to the new passphrase.
 ### Step 3 — restore with the new passphrase
 
 ```bash
-./cli/mscikdf_cli_macos restore "newpass" "<new_mnemonic>" 
+./mscikdf restore "newpass" "<new_mnemonic>" 
 ```
 
 **Expected**:
 
 All derived addresses remain unchanged.
 
-### 3.3 Scenario 3 — Multi-Version Passphrase restorey
+### 3.3 Scenario 3 — Multi-Version Passphrase restore
 
 **Sequence example:**
 
@@ -185,19 +231,19 @@ You will receive:
 Now verify:
 
 ```bash
-./cli/mscikdf_cli_macos restore "P1" "<mnemonic_1>" 
-./cli/mscikdf_cli_macos restore "P2" "<mnemonic_2>" 
-./cli/mscikdf_cli_macos restore "P3" "<mnemonic_3>" 
+./mscikdf restore "P1" "<mnemonic_1>" 
+./mscikdf restore "P2" "<mnemonic_2>" 
+./mscikdf restore "P3" "<mnemonic_3>" 
 ```
 `
 **Expected:**
 
-- All three restoreies produce the **same multi-chain identity**.  
+- All three restores produce the **same multi-chain identity**.  
 - No state is written to disk at any point.
 
 ---
 
-### 3.4 Scenario 4 — Stateless restorey
+### 3.4 Scenario 4 — Stateless restore
 
 Demonstrates complete independence from external files or stored state.
 
@@ -210,7 +256,7 @@ rm -rf ./data ./cache ./config
 
 **Step 3 — restore**
 ```bash
-./cli/mscikdf_cli_macos restore "<passphrase>" "<mnemonic>" 
+./mscikdf restore "<passphrase>" "<mnemonic>" 
 ```
 
 **Expected:**  
