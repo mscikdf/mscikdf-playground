@@ -49,8 +49,8 @@ unsafe fn load_symbols(lib: &Library) -> (
     Symbol<extern "C" fn(*const c_char, *const c_char, *const c_char) -> *mut c_char>,
     Symbol<extern "C" fn(GeneratedWallet)>,
     Symbol<extern "C" fn() -> *mut c_char>,
-    Symbol<extern "C" fn(*const c_char, *const c_char) -> GeneratedWallet>, // 新增
-    Symbol<extern "C" fn(*const c_char, *const c_char) -> GeneratedWallet>, // 新增
+    Symbol<extern "C" fn(*const c_char, *const c_char) -> GeneratedWallet>,
+    Symbol<extern "C" fn(*const c_char, *const c_char) -> GeneratedWallet>,
 ) {
     let gen: Symbol<extern "C" fn(*const c_char) -> GeneratedWallet> =
         lib.get(b"mscikdf_generate").expect("missing symbol: mscikdf_generate");
@@ -118,7 +118,6 @@ fn main() {
         match args[1].as_str() {
             "generate" => {
                 if args.len() != 3 {
-                 // 期望: 程序名 + generate + pass => 共 3 个参数
                     eprintln!("Usage: {} generate <pass>", args[0]);
                     process::exit(1);
                 }
@@ -130,7 +129,6 @@ fn main() {
 
             "rekey" => {
                 if args.len() != 28 {
-                    // 期望: 程序名 + rekey + old_pass + new_pass + 24个单词 => 共 28 个参数
                     eprintln!("Usage: {} rekey <old_pass> <new_pass> <24-word mnemonic>", args[0]);
                     process::exit(1);
                 }
@@ -158,7 +156,6 @@ fn main() {
                 println!("New mnemonic: {}", s);
             }
             "restore" => {
-                 // 期望: 程序名 + restore + passphrase + 24个单词 => 共 27 个参数
                 if args.len() != 27 {
                     eprintln!("Usage: {} restore <passphrase> <word1> <word2> ... <word24>", args[0]);
                     eprintln!("   Must provide exactly 24 mnemonic words.");
@@ -166,13 +163,12 @@ fn main() {
                 }
 
                 let passphrase = CString::new(args[2].as_str()).expect("Invalid passphrase");
-                let mnemonic_words = &args[3..]; // 24 个单词
+                let mnemonic_words = &args[3..];
                 let mnemonic = mnemonic_words.join(" ");
                 let mnemonic_c = CString::new(mnemonic.as_str()).expect("Invalid mnemonic word");
 
                 let wallet = mscikdf_restore_from_mnemonic(mnemonic_c.as_ptr(), passphrase.as_ptr());
 
-                // 检查是否恢复失败（假设返回的 wallet 所有指针为 null 表示失败）
                 if wallet.mnemonic.is_null() && wallet.solana_address.is_null() {
                     eprintln!("Restore failed: invalid mnemonic or passphrase");
                     process::exit(1);
@@ -183,7 +179,6 @@ fn main() {
             }
 
             "export" => {
-                // 期望: 程序名 + restore + passphrase + 24个单词 => 共 26 个参数
                 if args.len() != 27 {
                     eprintln!("Usage: {} export <passphrase> <word1> <word2> ... <word24>", args[0]);
                     eprintln!("   Must provide exactly 24 mnemonic words.");
@@ -191,13 +186,12 @@ fn main() {
                 }
 
                 let passphrase = CString::new(args[2].as_str()).expect("Invalid passphrase");
-                let mnemonic_words = &args[3..]; // 24 个单词
+                let mnemonic_words = &args[3..];
                 let mnemonic = mnemonic_words.join(" ");
                 let mnemonic_c = CString::new(mnemonic.as_str()).expect("Invalid mnemonic word");
 
                 let wallet = mscikdf_export_private_keys(mnemonic_c.as_ptr(), passphrase.as_ptr());
 
-                // 检查是否恢复失败（假设返回的 wallet 所有指针为 null 表示失败）
                 if wallet.mnemonic.is_null() && wallet.solana_address.is_null() {
                     eprintln!("Export failed: invalid mnemonic or passphrase");
                     process::exit(1);
