@@ -37,5 +37,31 @@ mod tests {
         assert!(matches!(res, Err(MscikdfError::InvalidPassphrase)));
     }
 
+    // let params = Params::new(
+    //     131072, // m = 128 MiB (in KiB)
+    //     3,      // t = 3 iterations
+    //     4,      // p = 4 lanes
+    //     Some(32)
+    // ).map_err(|_| MscikdfError::KdfError)?;
+    #[test]
+    fn test_unseal_performance_meets_security_target() {
+        use std::time::{Instant, Duration};
+        use mscikdf::passphrase_sealing_util::PassphraseSealingUtil;
+        use uuid::Uuid;
 
+        const MIN_SECURITY_TIME: Duration = Duration::from_millis(800);
+
+        let uuid = Uuid::new_v4();
+        let sealed = PassphraseSealingUtil::seal(&uuid, b"password_for_timing").unwrap();
+
+        let start = Instant::now();
+        let _ = PassphraseSealingUtil::unseal(&sealed, b"password_for_timing").unwrap();
+        let duration = start.elapsed();
+
+        assert!(
+            duration >= MIN_SECURITY_TIME,
+            "Argon2id Unseal time ({:?}) is too fast! Must be >= {:?}",
+            duration, MIN_SECURITY_TIME
+        );
+    }
 }
