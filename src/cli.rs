@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use std::process;
 
 #[repr(C)]
-pub struct GeneratedWallet {
+pub struct CryptoEntity {
     pub mnemonic: *mut c_char,
     pub solana_address: *mut c_char,
     pub evm_address: *mut c_char,
@@ -45,55 +45,72 @@ fn resolve_library_path() -> PathBuf {
 
 #[allow(mismatched_lifetime_syntaxes)]
 unsafe fn load_symbols(lib: &Library) -> (
-    Symbol<extern "C" fn(*const c_char) -> GeneratedWallet>,
+    Symbol<extern "C" fn(*const c_char) -> CryptoEntity>,
     Symbol<extern "C" fn(*const c_char, *const c_char, *const c_char) -> *mut c_char>,
-    Symbol<extern "C" fn(GeneratedWallet)>,
+    Symbol<extern "C" fn(CryptoEntity)>,
     Symbol<extern "C" fn() -> *mut c_char>,
-    Symbol<extern "C" fn(*const c_char, *const c_char) -> GeneratedWallet>,
-    Symbol<extern "C" fn(*const c_char, *const c_char) -> GeneratedWallet>,
+    Symbol<extern "C" fn(*const c_char, *const c_char) -> CryptoEntity>,
+    Symbol<extern "C" fn(*const c_char, *const c_char) -> CryptoEntity>,
 ) {
-    let gen: Symbol<extern "C" fn(*const c_char) -> GeneratedWallet> =
+    let gen: Symbol<extern "C" fn(*const c_char) -> CryptoEntity> =
         lib.get(b"mscikdf_generate").expect("missing symbol: mscikdf_generate");
 
     let rekey: Symbol<extern "C" fn(*const c_char, *const c_char, *const c_char) -> *mut c_char> =
         lib.get(b"mscikdf_change_mnemonic_passphrase").expect("missing symbol: mscikdf_change_mnemonic_passphrase");
 
-    let free_wallet: Symbol<extern "C" fn(GeneratedWallet)> =
+    let free_wallet: Symbol<extern "C" fn(CryptoEntity)> =
         lib.get(b"mscikdf_free_wallet").expect("missing symbol: mscikdf_free_wallet");
 
     let version: Symbol<extern "C" fn() -> *mut c_char> =
         lib.get(b"mscikdf_version").expect("missing symbol: mscikdf_version");
 
-    let restore: Symbol<extern "C" fn(*const c_char, *const c_char) -> GeneratedWallet> =
+    let restore: Symbol<extern "C" fn(*const c_char, *const c_char) -> CryptoEntity> =
         lib.get(b"mscikdf_view_wallet").expect("missing symbol: mscikdf_view_wallet");
 
-    let export: Symbol<extern "C" fn(*const c_char, *const c_char) -> GeneratedWallet> =
+    let export: Symbol<extern "C" fn(*const c_char, *const c_char) -> CryptoEntity> =
         lib.get(b"mscikdf_export_private_keys").expect("missing symbol: mscikdf_export_private_keys");
 
     (gen, rekey, free_wallet, version, restore, export)
 }
 
-fn print_wallet(w: &GeneratedWallet) {
-    macro_rules! field {
+fn print_wallet(w: &CryptoEntity) {
+    macro_rules! get_str {
         ($f:ident) => {
             if w.$f.is_null() {
-                "ERROR".to_string()
+                None
             } else {
-                unsafe { CStr::from_ptr(w.$f).to_string_lossy().into_owned() }
+                unsafe { Some(CStr::from_ptr(w.$f).to_string_lossy().into_owned()) }
             }
         };
     }
 
-    println!(
-        "mnemonic : {}\nsolana   : {}\nevm      : {}\nbitcoin  : {}\ncosmos   : {}\npolkadot : {}\nxidentity: {}",
-        field!(mnemonic),
-        field!(solana_address),
-        field!(evm_address),
-        field!(bitcoin_address),
-        field!(cosmos_address),
-        field!(polkadot_address),
-        field!(xidentity),
+    let json = format!(
+        r#"{{
+  "mnemonic": {mn},
+  "solana": {sol},
+  "evm": {evm},
+  "bitcoin": {btc},
+  "cosmos": {cos},
+  "polkadot": {dot},
+  "xidentity": {xid}
+}}"#,
+        mn = json_str(get_str!(mnemonic)),
+        sol = json_str(get_str!(solana_address)),
+        evm = json_str(get_str!(evm_address)),
+        btc = json_str(get_str!(bitcoin_address)),
+        cos = json_str(get_str!(cosmos_address)),
+        dot = json_str(get_str!(polkadot_address)),
+        xid = json_str(get_str!(xidentity)),
     );
+
+    println!("{}", json);
+}
+
+fn json_str(val: Option<String>) -> String {
+    match val {
+        None => "null".to_string(),
+        Some(s) => format!("\"{}\"", s.replace('"', "\\\"")),
+    }
 }
 
 fn main() {
