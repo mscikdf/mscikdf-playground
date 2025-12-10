@@ -1,6 +1,17 @@
 # MSCIKDF – Behavior Verification Test Suite  
 *A fully offline, air-gapped, stateless cryptographic behavior testing toolkit.*
 
+## ✨ MSCIKDF Capabilities Overview
+
+| MSCIKDF Capability | Technical Description |
+| :--- | :--- |
+| **Seed-Storage-Free Identity** | The root entropy (master seed) is **never stored** or exported. Identity is recovered **ephemerally** from a sealed artifact and a credential. |
+| **Credential-Sealed Entropy** | The master seed is protected by a **built-in, entropy-hardened credential mechanism**, eliminating the exposure risks of a bare key asset. |
+| **Atomic Credential Rotation** | Supports **unlimited, stateless passphrase/mnemonic rotation** without requiring rekeying or recalculation of existing derived addresses/keys. |
+| **Unilateral Stateless Revocation** | The credential binding can be **revoked immediately and unilaterally**, enabling robust and agile identity invalidation strategies. |
+| **PQC Migration Path Readiness** | Provides a seamless, root-level path to migrate identity to **Post-Quantum Cryptography (PQC)** by leveraging the context-isolation mechanism. |
+| **Legacy Asset Assimilation** | Existing cryptographic material (e.g., private keys, symmetric keys, or legacy seeds) from Key Management Systems (KMS), Hardware Security Modules (HSM), or traditional wallets can be securely assimilated into the MSCIKDF Crypto Entity model, leveraging its next-generation security features. |
+
 This test suite provides a controlled, reproducible environment for verifying a set of wallet behaviors using **only observable effects**.  
 
 No internal implementation details are exposed.  
