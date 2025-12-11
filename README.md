@@ -40,6 +40,13 @@ The production MSCIKDF-Core library will enforce:
 
 to ensure deterministic, misuse-resistant cryptographic behavior across platforms.
 
+> ⚠️ **Important Notice (Dec 11, 2025)**  
+> The prebuilt binaries (`*.so`, `*.a`, WASM artifacts) in this repository  
+> were compiled from an **older** version of the MSCIKDF implementation and  
+> do **NOT** reflect the algorithms, constants, sealing scheme, or  
+> domain-separated HKDF structure described in the **latest MSCIKDF paper**.  
+> Updated, paper-compliant builds will be published after full verification.
+
 **⚠️ Important Safety Notice**
 
 This toolkit is intended **for testing and research purposes only**.  
