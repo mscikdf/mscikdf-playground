@@ -23,7 +23,7 @@ fn test_derive_from_uuid() {
 // ===============================================================
 #[test]
 fn test_resolve_root_native() {
-    let wallet = MSCIKDF::generate_internal("pass", None);
+    let wallet = MSCIKDF::generate_internal("pass", None).unwrap();
     let mnemonic = wallet.mnemonic;
 
     let resolved = MSCIKDF::resolve_root(&mnemonic, "pass", None).unwrap();
@@ -120,7 +120,7 @@ fn test_private_key_extractors() {
 // ===============================================================
 #[test]
 fn test_decode_mnemonic_to_sealed() {
-    let wallet = MSCIKDF::generate_internal("ppp", None);
+    let wallet = MSCIKDF::generate_internal("ppp", None).unwrap();
     let mnemonic = wallet.mnemonic.clone();
 
     let sealed = MSCIKDF::decode_mnemonic_to_sealed(&mnemonic).unwrap();
@@ -172,7 +172,7 @@ fn test_free_string() {
 // ===============================================================
 #[test]
 fn test_sign_secp256k1_bitcoin() {
-    let wallet = MSCIKDF::generate_internal("pp", None);
+    let wallet = MSCIKDF::generate_internal("pp", None).unwrap();
     let mn = wallet.mnemonic;
 
     let sig = MSCIKDF::sign_message_internal(
@@ -189,7 +189,7 @@ fn test_sign_secp256k1_bitcoin() {
 
 #[test]
 fn test_sign_secp256k1_cosmos_amino() {
-    let wallet = MSCIKDF::generate_internal("pp2", None);
+    let wallet = MSCIKDF::generate_internal("pp2", None).unwrap();
     let mn = wallet.mnemonic;
 
     let sig = MSCIKDF::sign_message_internal(
@@ -206,7 +206,7 @@ fn test_sign_secp256k1_cosmos_amino() {
 
 #[test]
 fn test_sign_secp256k1_eip712() {
-    let wallet = MSCIKDF::generate_internal("pp3", None);
+    let wallet = MSCIKDF::generate_internal("pp3", None).unwrap();
     let mn = wallet.mnemonic;
 
     let sig = MSCIKDF::sign_message_internal(
@@ -226,7 +226,7 @@ fn test_sign_secp256k1_eip712() {
 // ===============================================================
 #[test]
 fn test_sign_recoverable_internal() {
-    let wallet = MSCIKDF::generate_internal("pp4", None);
+    let wallet = MSCIKDF::generate_internal("pp4", None).unwrap();
     let mn = wallet.mnemonic;
 
     let sig = MSCIKDF::sign_recoverable_internal(
@@ -248,7 +248,7 @@ fn test_sign_recoverable_internal() {
 // ===============================================================
 #[test]
 fn test_sign_secp256k1_recoverable_internal() {
-    let wallet = MSCIKDF::generate_internal("pp5", None);
+    let wallet = MSCIKDF::generate_internal("pp5", None).unwrap();
     let mn = wallet.mnemonic;
 
     let (r, s, v) =
@@ -264,8 +264,8 @@ fn test_sign_secp256k1_recoverable_internal() {
 // ===============================================================
 #[test]
 fn test_compute_dh_key_internal_simple() {
-    let wallet_a = MSCIKDF::generate_internal("aaa", None);
-    let wallet_b = MSCIKDF::generate_internal("bbb", None);
+    let wallet_a = MSCIKDF::generate_internal("aaa", None).unwrap();
+    let wallet_b = MSCIKDF::generate_internal("bbb", None).unwrap();
 
     let mn_a = wallet_a.mnemonic;
     let mn_b = wallet_b.mnemonic;

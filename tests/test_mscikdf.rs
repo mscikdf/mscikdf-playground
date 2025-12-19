@@ -7,13 +7,15 @@ use rand::rngs::OsRng;
 use x25519_dalek::{StaticSecret, PublicKey as XPublic};
 use sha3::Digest;
 use arrayref::array_ref;
+use uuid::Uuid;
+ use rand::RngCore;
 
 const PASS: &str = "unit_test_passphrase";
 const MSG: &[u8] = b"hello world TEST MESSAGE";
 
 #[test]
 fn test_generate_and_view() {
-    let wallet = MSCIKDF::generate_internal(PASS, None);
+    let wallet = MSCIKDF::generate_internal(PASS, None).unwrap();
     let mnemonic = wallet.mnemonic;
     assert!(!mnemonic.is_empty());
 
@@ -24,7 +26,7 @@ fn test_generate_and_view() {
 
 #[test]
 fn test_export_private_keys() {
-    let wallet = MSCIKDF::generate_internal(PASS, None);
+    let wallet = MSCIKDF::generate_internal(PASS, None).unwrap();
     let mnemonic = wallet.mnemonic;
 
     let keys = MSCIKDF::export_private_keys_internal(&mnemonic, PASS, None);
@@ -37,7 +39,7 @@ fn test_generate_and_view_with_secondary() {
     let primary = "prim_pass";
     let secondary = "sec_enterprise";
 
-    let wallet = MSCIKDF::generate_internal(primary, Some(secondary));
+    let wallet = MSCIKDF::generate_internal(primary, Some(secondary)).unwrap();
     let mnemonic = wallet.mnemonic.clone();
 
     let view_ok = MSCIKDF::view_wallet_internal(&mnemonic, primary, Some(secondary));
@@ -59,7 +61,7 @@ fn test_export_private_keys_with_secondary() {
     let primary = "pp_with_sec";
     let secondary = "sec_layer";
 
-    let wallet = MSCIKDF::generate_internal(primary, Some(secondary));
+    let wallet = MSCIKDF::generate_internal(primary, Some(secondary)).unwrap();
     let mnemonic = wallet.mnemonic.clone();
 
     let keys_ok =
@@ -75,7 +77,7 @@ fn test_export_private_keys_with_secondary() {
 
 #[test]
 fn test_sign_secp256k1() {
-    let wallet = MSCIKDF::generate_internal(PASS, None);
+    let wallet = MSCIKDF::generate_internal(PASS, None).unwrap();
     let mnemonic = wallet.mnemonic;
 
     let sig = MSCIKDF::sign_message_internal(&mnemonic, PASS, MSG, SignFlavor::Secp256k1Evm, None).unwrap();
@@ -87,8 +89,8 @@ fn test_xid_encrypt_decrypt_via_dh() {
     use aes_gcm::{Aes256Gcm, KeyInit, Nonce, aead::Aead};
     use rand::RngCore;
 
-    let wallet_a = MSCIKDF::generate_internal("aaa_pass", None);
-    let wallet_b = MSCIKDF::generate_internal("bbb_pass", None);
+    let wallet_a = MSCIKDF::generate_internal("aaa_pass", None).unwrap();
+    let wallet_b = MSCIKDF::generate_internal("bbb_pass", None).unwrap();
 
     let mn_a = wallet_a.mnemonic.clone();
     let mn_b = wallet_b.mnemonic.clone();
@@ -155,8 +157,8 @@ fn test_xid_dh_and_decrypt_with_secondary() {
     let primary_b = "bbb_prim";
     let sec = "enterprise_factor";
 
-    let wallet_a = MSCIKDF::generate_internal(primary_a, Some(sec));
-    let wallet_b = MSCIKDF::generate_internal(primary_b, Some(sec));
+    let wallet_a = MSCIKDF::generate_internal(primary_a, Some(sec)).unwrap();
+    let wallet_b = MSCIKDF::generate_internal(primary_b, Some(sec)).unwrap();
 
     let mn_a = wallet_a.mnemonic.clone();
     let mn_b = wallet_b.mnemonic.clone();
@@ -229,7 +231,7 @@ fn test_xid_dh_and_decrypt_with_secondary() {
 
 #[test]
 fn test_rotate_passphrase() {
-    let wallet = MSCIKDF::generate_internal(PASS, None);
+    let wallet = MSCIKDF::generate_internal(PASS, None).unwrap();
     let mnemonic = wallet.mnemonic.clone();
 
     let new_pass = "my_new_pass_999";
@@ -264,7 +266,7 @@ fn test_rotate_passphrase_with_secondary() {
     let primary = "rotate_prim";
     let secondary = "rotate_sec";
 
-    let wallet = MSCIKDF::generate_internal(primary, Some(secondary));
+    let wallet = MSCIKDF::generate_internal(primary, Some(secondary)).unwrap();
     let mnemonic = wallet.mnemonic.clone();
 
     let new_pass = "rotate_new_123";
@@ -308,7 +310,7 @@ fn test_rotate_passphrase_with_secondary() {
 
 #[test]
 fn test_verify_ed25519_signature_internal() {
-    let wallet = MSCIKDF::generate_internal(PASS, None);
+    let wallet = MSCIKDF::generate_internal(PASS, None).unwrap();
     let mnemonic = wallet.mnemonic.clone();
 
     let (_sk, pk) = MSCIKDF::solana_keypair_internal(&mnemonic, PASS, None)
@@ -340,7 +342,7 @@ fn test_verify_ed25519_signature_internal() {
 
 #[test]
 fn test_verify_ed25519_signature_with_timestamp_internal() {
-    let wallet = MSCIKDF::generate_internal(PASS, None);
+    let wallet = MSCIKDF::generate_internal(PASS, None).unwrap();
     let mnemonic = wallet.mnemonic.clone();
 
     let (_sk, pk) = MSCIKDF::solana_keypair_internal(&mnemonic, PASS, None)
@@ -381,7 +383,7 @@ fn test_ed25519_sign_verify_with_secondary() {
     let primary = "sig_primary";
     let secondary = "sig_secondary";
 
-    let wallet = MSCIKDF::generate_internal(primary, Some(secondary));
+    let wallet = MSCIKDF::generate_internal(primary, Some(secondary)).unwrap();
     let mnemonic = wallet.mnemonic.clone();
 
     let (_sk, pk) = MSCIKDF::solana_keypair_internal(
@@ -429,7 +431,7 @@ fn test_ed25519_sign_verify_with_secondary() {
 
 #[test]
 fn test_verify_ed25519_signature_prefixed_simulated() {
-    let wallet = MSCIKDF::generate_internal(PASS, None);
+    let wallet = MSCIKDF::generate_internal(PASS, None).unwrap();
     let mnemonic = wallet.mnemonic.clone();
 
     let (_sk, pk) = MSCIKDF::solana_keypair_internal(&mnemonic, PASS, None)
@@ -465,11 +467,59 @@ fn test_verify_ed25519_signature_prefixed_simulated() {
 
 #[test]
 fn test_resolve_root_uuid_stable_for_same_inputs() {
-    let w = MSCIKDF::generate_internal("pass", Some("sec"));
+    let w = MSCIKDF::generate_internal("pass", Some("sec")).unwrap();
     let mn = w.mnemonic;
 
     let r1 = MSCIKDF::resolve_root(&mn, "pass", Some("sec")).unwrap();
     let r2 = MSCIKDF::resolve_root(&mn, "pass", Some("sec")).unwrap();
 
     assert_eq!(r1.uuid, r2.uuid);
+}
+
+#[test]
+fn test_cryptographic_golden_vectors_and_domain_separation() {
+    let uuid_str = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
+    let uuid = Uuid::parse_str(uuid_str).unwrap();
+    let pass = "mscikdf-golden-pass-2025";
+
+    let seeds = MSCIKDF::derive_from_uuid(&uuid).unwrap();
+
+    assert_eq!(hex::encode(&seeds.ed25519[..4]), "eac16cb8");
+    assert_eq!(hex::encode(&seeds.secp256k1[..4]), "45a19328");
+    assert_eq!(hex::encode(&seeds.ml_dsa_44[..4]), "639505b9");
+
+    assert_ne!(seeds.ed25519, seeds.secp256k1, "Ed25519 and Secp256k1 seeds must be isolated");
+    assert_ne!(seeds.x25519, seeds.ml_dsa_44, "X25519 and PQC seeds must be isolated");
+
+    let sealed = PassphraseSealingUtil::seal(&uuid, pass).unwrap();
+    let unsealed_uuid = PassphraseSealingUtil::unseal(&sealed, pass).unwrap();
+    assert_eq!(uuid, unsealed_uuid, "Roundtrip must preserve UUID");
+
+    let mut tampered_sealed = sealed.clone();
+    tampered_sealed[31] ^= 0x01;
+    let tamper_res = PassphraseSealingUtil::unseal(&tampered_sealed, pass);
+    assert!(tamper_res.is_err(), "AES-SIV authentication tag must catch tampering");
+}
+
+#[test]
+fn test_memory_zeroization_security_audit() {
+    let mut sensitive_data = [0u8; 32];
+    rand::thread_rng().fill_bytes(&mut sensitive_data);
+
+    let is_all_zero_init = sensitive_data.iter().all(|&b| b == 0);
+    assert!(!is_all_zero_init, "Initial random data should not be all zeros");
+
+    let ptr = sensitive_data.as_ptr();
+
+    MSCIKDF::zero_out(&mut sensitive_data);
+
+    unsafe {
+        for i in 0..32 {
+            let val = std::ptr::read_volatile(ptr.add(i));
+            assert_eq!(val, 0, "Memory leak detected at byte [{}]: sensitive data was not zeroed!", i);
+        }
+    }
+
+    let finalized_data = std::hint::black_box(sensitive_data);
+    assert!(finalized_data.iter().all(|&b| b == 0), "Finalized data buffer must be all zeros");
 }
