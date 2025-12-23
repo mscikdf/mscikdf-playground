@@ -1,150 +1,118 @@
 {
-  "description": "MSCIKDF Comprehensive Test Vectors V1.0",
-  "project_version": "2025.11.12",
+  "description": "ACEGF / MSCIKDF Deterministic Identity Test Vectors V1.0",
+  "project_version": "2025.12.23",
   "test_cases": [
     {
       "case_id": "TEST_CASE_001",
-      "name": "Initial_Generation_GroundTruth_1",
-      "description": "Generate a new wallet (Identity #1) using a simple password ('abc') to establish the deterministic output for this UUID.",
-      "command": "./mscikdf generate abc",
+      "name": "Initial_Generation_ASCII_Passphrase",
+      "description": "Generate a new ACEGF identity using ASCII passphrase 'abc'. Establishes Identity #1.",
+      "command": "./acegf generate abc",
       "input": {
         "passphrase": "abc"
       },
       "expected_output": {
-        "mnemonic": "payment season kiss intact laundry refuse twenty apple sting brown disorder clump sing clap chat various core kiss found monkey place walk leaf bomb",
-        "solana": "2tJwQGAV4XVzqF7MFnhH7d7U1ugBmaxLJeRu7WGAKv5k",
-        "evm": "0xe53ed6f2e002e2873370d9cbc664acae1edd3de1",
-        "bitcoin": "bc1hl5hs5xnfuejmhq3cwhf964w64u8fcc9ffk0xr",
-        "cosmos": "cosmos1hl5hs5xnfuejmhq3cwhf964w64u8fcc9p2fhhe",
-        "polkadot": "5ChRNcPNxwnHYJiQc68i6RLmEruBWWYmNCYxrDan6GdMhP41",
-        "xidentity": "HACXN6nxwtIdb7dLyYeHfaUmvKqV38WE0IXoiLptLoc="
+        "mnemonic": "vintage crash medal recycle item pigeon error real join december image into toe bag coffee pyramid gorilla tank scrub drift pencil clap vacant unlock",
+        "solana": "5yFK8sUGK6Ng5TqENvnLhwHRPDzyTMzLLp5ViUyx2ppk",
+        "evm": "0x1aCDA9f78D27e433317de8b14F50bb333df5055e",
+        "bitcoin": "bc1pnjptwsfjpukkj4xcw20fm5ddjrfqqquahj34q4lkd6jemxnvs84s5wgs2u",
+        "cosmos": "cosmos1kzuju6s08kacthf45vd3raexjfuggrx2n9y6aq",
+        "polkadot": "16VnAyYpbPgnVzS2TEHeZK7LMegJ8dTDez68KUbrsS3D2thU",
+        "xidentity": "ZgjpfHPPDtpT0vHezh5inQW/ruBmDQTDuNMyrCWLzhw="
       }
     },
     {
       "case_id": "TEST_CASE_002",
-      "name": "Uniqueness_Test",
-      "description": "Calling 'generate' again must produce a completely new, random UUID and thus different keys and mnemonic. (Identity #2)",
-      "command": "./mscikdf generate abc",
+      "name": "View_Deterministic_Restore_ASCII",
+      "description": "Restore Identity #1 using the original mnemonic and passphrase 'abc'. Must deterministically match TEST_CASE_001.",
+      "command": "./acegf view abc [mnemonic]",
       "input": {
-        "passphrase": "abc"
+        "passphrase": "abc",
+        "mnemonic": "vintage crash medal recycle item pigeon error real join december image into toe bag coffee pyramid gorilla tank scrub drift pencil clap vacant unlock"
       },
-      "expected_output": {
-        "mnemonic": "exile soft you scorpion unit echo daring wave quantum toddler spend people immense ginger fine mistake vintage stock harvest deal differ wagon stool review",
-        "solana": "GdfkjTFJUxHF1MGENEXEdEupkirgYh58qMi6pjkzTaFR",
-        "evm": "0x0d8c7c9bd2a98f6e69f7a9b4c437b69e10e879bf",
-        "bitcoin": "bc1fpmzd0aylrm28d8w7elnuncxjct50x2326fv5g",
-        "cosmos": "cosmos1fpmzd0aylrm28d8w7elnuncxjct50x23zek59j",
-        "polkadot": "5HKFBB61a3Lve5kKnhJkpyXxfZjsmkVZSJc6y2dJD2PEmEV8",
-        "xidentity": "6EQIRVuhOfdO1AFLCrvpWwUIcIlGZPkIgM9Cbzweqmg="
-      }
+      "expected_output_ref": "TEST_CASE_001"
     },
     {
       "case_id": "TEST_CASE_003",
-      "name": "Restore_GroundTruth_1_Deterministic",
-      "description": "Restore Identity #1 using the original mnemonic and passphrase. Must deterministically match TC_001.",
-      "command": "./mscikdf restore abc payment season kiss intact laundry refuse twenty apple sting brown disorder clump sing clap chat various core kiss found monkey place walk leaf bomb",
-      "input": {
-        "passphrase": "abc",
-        "mnemonic": "payment season kiss intact laundry refuse twenty apple sting brown disorder clump sing clap chat various core kiss found monkey place walk leaf bomb"
-      },
-      "expected_output_ref": "TEST_CASE_001"
-    },
-    {
-      "case_id": "TEST_CASE_004",
-      "name": "Rekey_Operation",
-      "description": "Change the passphrase from 'abc' to 'cde' for Identity #1. This generates a new mnemonic from the re-sealed UUID.",
-      "command": "./mscikdf rekey abc cde [Mnemonic_from_TC001]",
+      "name": "Rekey_ASCII_to_ASCII",
+      "description": "Rekey Identity #1 by changing passphrase from 'abc' to 'cde'.",
+      "command": "./acegf rekey abc cde [mnemonic]",
       "input": {
         "old_passphrase": "abc",
         "new_passphrase": "cde",
-        "old_mnemonic": "payment season kiss intact laundry refuse twenty apple sting brown disorder clump sing clap chat various core kiss found monkey place walk leaf bomb"
+        "old_mnemonic": "vintage crash medal recycle item pigeon error real join december image into toe bag coffee pyramid gorilla tank scrub drift pencil clap vacant unlock"
       },
       "expected_output": {
-        "new_mnemonic": "shift release ranch online fluid power arrest safe puppy canyon secret maple broom cat item unhappy rug used tiger staff cram rubber come wreck"
+        "new_mnemonic": "stuff roast enable clown casual crazy swing sun spoil home derive ocean screen frog shoot devote memory fall chuckle float canvas blue sudden quick"
       }
     },
     {
-      "case_id": "TEST_CASE_005",
-      "name": "Restore_After_Rekey",
-      "description": "Restore Identity #1 using the NEW mnemonic and the NEW passphrase ('cde'). The derived addresses must remain identical to TC_001, proving the underlying UUID is unchanged.",
-      "command": "./mscikdf restore cde shift release ranch online fluid power arrest safe puppy canyon secret maple broom cat item unhappy rug used tiger staff cram rubber come wreck",
+      "case_id": "TEST_CASE_004",
+      "name": "View_After_Rekey_ASCII",
+      "description": "Restore Identity #1 using new mnemonic and new passphrase 'cde'. Addresses must match TEST_CASE_001.",
+      "command": "./acegf view cde [new_mnemonic]",
       "input": {
         "passphrase": "cde",
-        "mnemonic": "shift release ranch online fluid power arrest safe puppy canyon secret maple broom cat item unhappy rug used tiger staff cram rubber come wreck"
+        "mnemonic": "stuff roast enable clown casual crazy swing sun spoil home derive ocean screen frog shoot devote memory fall chuckle float canvas blue sudden quick"
       },
       "expected_output_ref": "TEST_CASE_001"
     },
     {
-      "case_id": "TEST_CASE_006",
-      "name": "Unicode_Password_Chinese",
-      "description": "Test password with Chinese characters ('测试'). Verifies Argon2id UTF-8 handling.",
-      "command": "./mscikdf generate 测试",
+      "case_id": "TEST_CASE_005",
+      "name": "Legacy_12_Word_Aceize",
+      "description": "Convert a legacy 12-word mnemonic into an ACEGF identity using passphrase 'abc'.",
+      "command": "./acegf aceize abc [12-word mnemonic]",
       "input": {
-        "passphrase": "测试"
+        "passphrase": "abc",
+        "legacy_mnemonic": "figure pony hour transfer toilet blush easy sorry taste write swing neck"
       },
       "expected_output": {
-        "mnemonic": "visit cinnamon expire expose crop spell display exotic field provide glass jaguar salon abuse coffee observe worry stage uncle charge swift stuff buyer either",
-        "solana": "EQQYFatyiA7jMuLjYKL1ob9yLupeuE65S6SL4Nsd7gCG",
-        "evm": "0xc068d7352963fa9e10e89ac577b158905d4dc823",
-        "bitcoin": "bc1thxaavpmc8jslsk87uu946zp27evqh630cp2yy",
-        "cosmos": "cosmos1thxaavpmc8jslsk87uu946zp27evqh638m7j47",
-        "polkadot": "5GZpweyvXZ1UKxpoLDPBn2WUMp7P3UZkJWH72oa8Mg73yN99",
-        "xidentity": "xybncaYcrhzkCreRZHfe0NXkj440rsaf9bXIeUhNazk="
+        "mnemonic": "language issue crash subject warm when step shadow two live fantasy cake crush key calm cabbage ready error sure idea dish rotate drama balance",
+        "solana": "p9vabuSUkrntQwDNiA7X2xaiaBkwFn2SxJdmAFdHgKd",
+        "evm": "0xe21AA588aEFA0AE391798A122f0994E9eD9406E5",
+        "bitcoin": "bc1pet90lyvvca05c4zhme6925zr2kgdwjj564nm8kqhf758gvgp9fvs6px5g7",
+        "cosmos": "cosmos1zvtxtz5vh500rh0k0n3laeh6z0t263yp8krl80",
+        "polkadot": "132SUNr7yrVqTMYYACtHQSz9RCR1Pkw126BkF5PGdW892LoV",
+        "xidentity": "DUZt+nGZE1ZpGJhW0MYdtibPQcEBKXMHYkZW5phnoTo="
+      }
+    },
+    {
+      "case_id": "TEST_CASE_006",
+      "name": "Unicode_Passphrase_Emoji",
+      "description": "Rekey identity using emoji passphrase. Tests UTF-8 and non-ASCII passphrase handling.",
+      "command": "./acegf rekey cde 🔥🔥 [mnemonic]",
+      "input": {
+        "old_passphrase": "cde",
+        "new_passphrase": "🔥🔥",
+        "old_mnemonic": "mushroom unusual extend belt torch sketch limb symbol invest fury dinner fly capital you love school logic banana mention wrist buffalo spike finger elite"
+      },
+      "expected_output": {
+        "new_mnemonic": "rabbit thing indoor flower brass blush distance sauce swear ramp guard decorate news girl belt kid embody spoil skate alone suit record park wisdom"
       }
     },
     {
       "case_id": "TEST_CASE_007",
-      "name": "Complex_Password_Emoji_GroundTruth_3",
-      "description": "Test password containing emojis and special symbols ('🔐2025'). Establishes Identity #3.",
-      "command": "./mscikdf generate 🔐2025",
+      "name": "Unicode_Passphrase_Chinese",
+      "description": "Rekey identity using Chinese UTF-8 passphrase '测试'.",
+      "command": "./acegf rekey 🔥🔥 测试 [mnemonic]",
       "input": {
-        "passphrase": "🔐2025"
+        "old_passphrase": "🔥🔥",
+        "new_passphrase": "测试",
+        "old_mnemonic": "rabbit thing indoor flower brass blush distance sauce swear ramp guard decorate news girl belt kid embody spoil skate alone suit record park wisdom"
       },
       "expected_output": {
-        "mnemonic": "range office dice close street little because keep disorder cook fame vast law roast police truth churn decline save cheap seed despair silent word",
-        "solana": "FMTPCYk1MncRocQxuurJ1TKLbyStiXuFXHhrrBmYCXap",
-        "evm": "0x4ae5435c5fc07eaf4d35df028f1b1559588b9aa4",
-        "bitcoin": "bc1ru77nqzkcmj0mnsq8f40uklh6d5x0mgxz9yxxz",
-        "cosmos": "cosmos1ru77nqzkcmj0mnsq8f40uklh6d5x0mgx2xm7hc",
-        "polkadot": "5GtKPGRNkukUkYnsmoczsa8WpqfNdFEU6MbcCcNUqtjusDKM",
-        "xidentity": "1UEQcEMee5+d/rABBwBFqfhDbB8vna3o1W8pAseB0Ak="
+        "new_mnemonic": "deliver truck spread mask fetch connect cute credit cigar garlic student forest decade exchange swap issue wage gauge eagle soup squirrel cash dog whale"
       }
     },
     {
       "case_id": "TEST_CASE_008",
-      "name": "Restore_Complex_Password",
-      "description": "Restore Identity #3 using the Emoji/Special Character password.",
-      "command": "./mscikdf restore 🔐2025 range office dice close street little because keep disorder cook fame vast law roast police truth churn decline save cheap seed despair silent word",
+      "name": "View_After_Multi_Rekey_Unicode",
+      "description": "Restore identity after multiple rekey operations with Unicode passphrases. Addresses must remain invariant.",
+      "command": "./acegf view 测试 [mnemonic]",
       "input": {
-        "passphrase": "🔐2025",
-        "mnemonic": "range office dice close street little because keep disorder cook fame vast law roast police truth churn decline save cheap seed despair silent word"
+        "passphrase": "测试",
+        "mnemonic": "deliver truck spread mask fetch connect cute credit cigar garlic student forest decade exchange swap issue wage gauge eagle soup squirrel cash dog whale"
       },
-      "expected_output_ref": "TEST_CASE_007"
-    },
-    {
-      "case_id": "TEST_CASE_009",
-      "name": "Rekey_Complex_to_Emoji",
-      "description": "Change the password for Identity #3 from '🔐2025' to a new Emoji password ('🔥🌍🔥').",
-      "command": "./mscikdf rekey 🔐2025 🔥🌍🔥 [Mnemonic_from_TC007]",
-      "input": {
-        "old_passphrase": "🔐2025",
-        "new_passphrase": "🔥🌍🔥",
-        "old_mnemonic": "range office dice close street little because keep disorder cook fame vast law roast police truth churn decline save cheap seed despair silent word"
-      },
-      "expected_output": {
-        "new_mnemonic": "tooth bag shuffle acoustic fork health write avoid tired goddess morning chicken element path prevent sea lab wisdom flower violin common network say virus"
-      }
-    },
-    {
-      "case_id": "TEST_CASE_010",
-      "name": "Restore_After_Emoji_Rekey",
-      "description": "Restore Identity #3 using the NEW Emoji mnemonic and the NEW Emoji password. Addresses must match TC_007.",
-      "command": "./mscikdf restore 🔥🌍🔥 tooth bag shuffle acoustic fork health write avoid tired goddess morning chicken element path prevent sea lab wisdom flower violin common network say virus",
-      "input": {
-        "passphrase": "🔥🌍🔥",
-        "mnemonic": "tooth bag shuffle acoustic fork health write avoid tired goddess morning chicken element path prevent sea lab wisdom flower violin common network say virus"
-      },
-      "expected_output_ref": "TEST_CASE_007"
+      "expected_output_ref": "TEST_CASE_005"
     }
   ]
 }
