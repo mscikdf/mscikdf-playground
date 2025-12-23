@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+#######################################
+# Resolve script root (absolute path)
+#######################################
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+OS="$(uname -s)"
+ARCH="$(uname -m)"
+
+#######################################
+# Normalize ARCH
+#######################################
+case "$ARCH" in
+  arm64)   ARCH="arm64" ;;
+  aarch64) ARCH="aarch64" ;;
+  x86_64)  ARCH="x86_64" ;;
+  *)
+    echo "[ERROR] Unsupported architecture: $ARCH"
+    exit 1
+    ;;
+esac
+
+#######################################
+# Select binary & lib path
+#######################################
+case "$OS" in
+  Darwin)
+    BIN="$ROOT_DIR/lib/acegf_cli_macos_$ARCH"
+    export DYLD_LIBRARY_PATH="$ROOT_DIR/lib:${DYLD_LIBRARY_PATH:-}"
+    ;;
+  Linux)
+    # Linux arm64 统一用 aarch64 命名
+    [[ "$ARCH" == "arm64" ]] && ARCH="aarch64"
+
+    BIN="$ROOT_DIR/lib/acegf_cli_linux_$ARCH"
+    export LD_LIBRARY_PATH="$ROOT_DIR/lib:${LD_LIBRARY_PATH:-}"
+    ;;
+  *)
+    echo "[ERROR] Unsupported OS: $OS"
+    exit 1
+    ;;
+esac
+
+#######################################
+# Validation
+#######################################
+if [[ ! -x "$BIN" ]]; then
+  echo "[ERROR] Binary not found or not executable:"
+  echo "        $BIN"
+  exit 1
+fi
+
+#######################################
+# Exec
+#######################################
+exec "$BIN" "$@"
